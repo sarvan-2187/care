@@ -2,6 +2,7 @@
 Exercise 1: Client-Server Communication (bidirectional chat) - SERVER
 Run on Computer A:  python server.py [port]
 """
+import os
 import socket
 import sys
 import threading
@@ -20,22 +21,29 @@ def get_local_ip():
         return "127.0.0.1"
     finally:
         s.close()
+closing = False          # True once WE end the chat
 
 
 def receive_loop(conn, peer):
     """Print every message the client sends until it disconnects."""
-    while True:
-        data = conn.recv(1024)
-        if not data:
-            print(f"\n[!] Client {peer} disconnected.")
-            break
-        msg = data.decode().strip()
-        print(f"\nClient ({peer}): {msg}\nServer> ", end="", flush=True)
-        if msg.lower() == "bye":
-            break
+    try:
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                break
+            msg = data.decode().strip()
+            print(f"\nClient ({peer}): {msg}\nServer> ", end="", flush=True)
+            if msg.lower() == "bye":
+                break
+    except OSError:
+        pass
+    if not closing:                       # the other side ended the chat
+        print(f"\n[!] Client {peer} disconnected.")
+        os._exit(0)
 
 
 def main():
+    global closing
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((HOST, PORT))
@@ -57,8 +65,10 @@ def main():
             msg = input("Server> ")
             if not t.is_alive():
                 break
-            conn.sendall(msg.encode())
             if msg.lower() == "bye":
+                closing = True
+            conn.sendall(msg.encode())
+            if closing:
                 break
     except (EOFError, KeyboardInterrupt, BrokenPipeError):
         pass
