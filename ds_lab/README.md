@@ -16,6 +16,6 @@ Java: compile first with `javac *.java` inside the folder.
 
 DSM demo order: PC1 `create counter 10` -> PC2 `read counter`, `incr counter` -> PC1 `read counter` (shows 11, written by PC2's IP).
 
-`Lab_Submission.docx` is the report (logo, Java + Python code, output screenshots). Fill in the yellow-highlighted fields.
+`Lab_Exercise_1_Submission.docx` (programs 1-2) and `Challenging_Task_1_DSM_Submission.docx` (DSM) are the reports (logo, Java + Python code, output screenshots). Fill in the yellow-highlighted fields.
 The screenshots in `assets/screenshots/` come from a single-machine test run, so both sides show the same IP;
 replace them with screenshots from your two computers before submitting.
